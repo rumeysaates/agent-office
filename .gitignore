@@ -1,0 +1,27 @@
+# --- Personal data (repo is public) ---
+vault/*
+!vault/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# --- Secrets / API keys ---
+.env
+.env.*
+kaggle.json
+*.key
+*.pem
+*secret*
+credentials*.json
+
+# --- Claude Code local settings ---
+.claude/settings.local.json
+
+# --- Obsidian ---
+.obsidian/workspace*
+.obsidian/cache
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
