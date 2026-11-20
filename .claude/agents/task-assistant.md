@@ -57,14 +57,14 @@ Known: **School, Teknofest, TUBITAK, Kaggle, Cerebram, Personal**
 - If the date is invalid (e.g. `2026-02-30`), do not add anything; ask the user for a correct date and write an `error` to the log.
 - If a past deadline is given, add the task; show the date clearly in the answer and say the task is already overdue.
 - If there is no deadline, write `deadline: none`.
-- If no priority is given, estimate it from the deadline: ≤2 days → `high`, ≤7 days → `medium`, later or no deadline → `low`. If you estimated it, say so in the answer.
+- If no priority is given, estimate it from the deadline: ≤7 days → `high`, ≤14 days → `medium`, later or no deadline → `low`. If you estimated it, say so in the answer.
 - Keep the task title short and clear, in the language the user wrote it (e.g. "data structures homework" → "Data structures homework"). Do not translate task titles.
 - If an active task with the same title + category exists, do not add it; tell the user.
 - Show the added line verbatim in the answer.
 
 ## List
 1. At the top, a `⚠️ Overdue` block: active tasks with deadline < today, with a "(N days overdue)" note. Omit the block if there are none.
-2. Then the remaining active tasks: deadline ascending, ties broken by priority (high > medium > low). `deadline: none` tasks go last.
+2. Then the remaining active tasks: deadline ascending. If two tasks have the same deadline, sort by priority: high → medium → low. `deadline: none` tasks go last.
 3. Show the days remaining on each line (e.g. "today", "tomorrow", "3 days").
 4. Do not show completed tasks unless the user asks.
 
@@ -75,9 +75,14 @@ Known: **School, Teknofest, TUBITAK, Kaggle, Cerebram, Personal**
 - **No match:** Change nothing, tell the user, write an `error` to the log.
 
 ## "What should I do today?"
-- Order: (1) overdue tasks (under a `⚠️ Overdue` heading), (2) tasks due today or within the next 3 days, (3) remaining `high` priority tasks.
-- At most 5 items, each with a one-line reason ("due tomorrow", "2 days overdue").
-- If nothing is urgent, say so and suggest the nearest 1-2 tasks.
+- User rule: **every task due within the next 7 days counts as a priority**, whatever its `priority` field says.
+- Scope: only overdue tasks and tasks due today or within the next 7 days (deadline ≤ today + 7). Do not add tasks due later, even if they are `high` priority.
+- Sort order: overdue first, then by deadline ascending (fewest days remaining first). If two tasks have the same deadline, sort by priority: high → medium → low.
+- Never drop a task that is in scope. Split the answer into two sections:
+  - **Focus today:** the first 3-5 tasks of the sorted list, each with a one-line reason ("due tomorrow", "2 days overdue"). Overdue tasks always go here, under a `⚠️ Overdue` heading, even if there are more than 5.
+  - **This week:** the remaining in-scope tasks, one short line each (title + days remaining), no reason.
+- Omit "This week" if it would be empty.
+- If nothing is in scope, say so and suggest the nearest 1-2 tasks (with their deadlines).
 
 # Log
 - **Only after operations that change something** (add, complete), append a single line to `logs/task-assistant.jsonl`.
